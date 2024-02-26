@@ -11,8 +11,8 @@ class Triangle:
         self.color = color
 class Raster:
     def __init__(self,resolution):        
-        self.width = resolution[0]+1
-        self.height = resolution[1]+1
+        self.width = resolution[1]+1
+        self.height = resolution[0]+1
         self.image = np.zeros((self.width, self.height, 4))
         self.image = IMG.fromarray((self.image * 255).astype(np.uint8))
         self.blank = np.zeros((self.width, self.height, 4))
@@ -86,6 +86,10 @@ class Raster:
             transformed_array_fast[linha == 1] = triangle_color
             imagem[i] = transformed_array_fast
         imagem = IMG.fromarray((imagem).astype(np.uint8))
+        #invert image horizontally
+        imagem = imagem.transpose(IMG.FLIP_TOP_BOTTOM)
+        #invert image vertically
+        imagem = imagem.transpose(IMG.FLIP_LEFT_RIGHT)
         self.image = IMG.alpha_composite(self.image, imagem)
         return self.image
     def clear(self):
