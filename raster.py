@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import array as vec
 from PIL import Image as IMG
-
+import time
 class Triangle:
     def __init__(self, vertices, color):
         v1 = vertices[0]
@@ -13,14 +13,17 @@ class Raster:
     def __init__(self,resolution):        
         self.width = resolution[1]+1
         self.height = resolution[0]+1
-        self.image = np.zeros((self.width, self.height, 4))
+        self.image = np.zeros((self.width, self.height, 3))
         self.image = IMG.fromarray((self.image * 255).astype(np.uint8))
-        self.blank = np.zeros((self.width, self.height, 4))
-    def draw(self, triangle):        
+        self.blank = np.zeros((self.width, self.height, 3))
+    def draw(self, triangle):
         if triangle.vertices.shape != (3, 2):
             raise ValueError('Triangle must have 3 vertices')
         #check if vetices are within boundsd
-        imagem = self.blank.copy()
+        boundX = [min(triangle.vertices[0][0], triangle.vertices[1][0], triangle.vertices[2][0]), max(triangle.vertices[0][0], triangle.vertices[1][0], triangle.vertices[2][0])]
+        boundY = [min(triangle.vertices[0][1], triangle.vertices[1][1], triangle.vertices[2][1]), max(triangle.vertices[0][1], triangle.vertices[1][1], triangle.vertices[2][1])]
+        imagem = np.zeros((boundY[1]-boundY[0]+1, boundX[1]-boundX[0]+1, 3))
+        triangle.vertices = triangle.vertices - [boundX[0], boundY[0]]
         # Ensure color is set for the triangle if not provided in your triangle object
         triangle_color = triangle.color
         linhas = []
@@ -68,29 +71,38 @@ class Raster:
                                 y, previousY = previousY, y
                         previousY = y
             linhas.append(linha)
+        # find triangle bounds
         
         for i in range(len(imagem)):
             linha = vec(imagem[i])
-            linha = np.where((linha == [0, 0, 0, 0]).all(axis=1), 0, 1)
+            
+            linha = np.where((linha == [0, 0, 0]).all(axis=1), 0, 1)
             dif = np.diff(linha)
             try:
                 viraCor = np.where(dif == -1)[0][0]
-                deixaCor = np.where(dif == 1)[0][1]
-                linha[viraCor+1:deixaCor+1] = 1
             except:
                 continue
-
-            transformed_array_fast = np.zeros((linha.size, 4))
+            try:
+                deixaCor = np.where(dif == 1)[0][1]
+            except:
+                try:
+                    deixaCor = np.where(dif == 1)[0][0]
+                except:
+                    continue
+            linha[viraCor+1:deixaCor+1] = 1
+            transformed_array_fast = np.zeros((linha.size,3))
             # Apply transformation
-            transformed_array_fast[linha == 0] = [0, 0, 0, 0]
+            transformed_array_fast[linha == 0] = [0, 0, 0]
             transformed_array_fast[linha == 1] = triangle_color
             imagem[i] = transformed_array_fast
+        
         imagem = IMG.fromarray((imagem).astype(np.uint8))
         #invert image horizontally
-        imagem = imagem.transpose(IMG.FLIP_TOP_BOTTOM)
-        #invert image vertically
-        imagem = imagem.transpose(IMG.FLIP_LEFT_RIGHT)
-        self.image = IMG.alpha_composite(self.image, imagem)
+        # imagem = imagem.transpose(IMG.FLIP_TOP_BOTTOM)
+        # #invert image vertically
+        # imagem = imagem.transpose(IMG.FLIP_LEFT_RIGHT)
+        # Add Imagem to self.image on the correct position
+        self.image.paste(imagem, (boundX[0], boundY[0]))
         return self.image
     def clear(self):
         self.image = self.blank.copy()

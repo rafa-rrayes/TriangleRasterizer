@@ -35,7 +35,7 @@ def project(camera_position, camera_direction, distance_to_plane, point):
     # Calculate the intersection point
     intersection_point = np.array([x0, y0, z0]) + t * direction_vector
     vector = intersection_point - np.array([A, B, C])*t2
-    return (vector[1], vector[2])
+    return (-vector[1], -vector[2])
 
 # # Example usage
 # distance_to_plane = 5

@@ -12,12 +12,11 @@ class Triangle3d:
         vertices2d = []
         for point in self.vertices:
             point2d = np.array(project(camera_position, camera_direction, clip_distance, point))
-            print(point2d, 'point')
             point2d = [round((((point2d[0]/raster_size[0])+1)/2)*resolution[0]), round((((point2d[1]/raster_size[1])+1)/2)*resolution[1])]
-            print()
-            print(point2d, 'point2d')
+            print(point2d)
             if point2d is None:
                 return None
+            print(point2d)
             vertices2d.append(point2d)
         return Triangle(vertices2d, self.color)
 class Renderer:
@@ -38,9 +37,10 @@ class Renderer:
         return self.raster.image
 
 # Example of using Renderer
-triangle1 = Triangle3d([[7, 1, 1], [7, 3, 1], [8, 2, -2]], (255, 0, 0, 255))
-triangle2 = Triangle3d([[6, 0, 0], [7, -2, -1], [8, -2, 4]], (255, 255, 0, 255))
-triangle3 = Triangle3d([[7, 1, 1], [7, 3, 1], [8, 2, 4]], (255, 0, 0, 255))
+triangle1 = Triangle3d([[7, 1, 1], [7, 3, 1], [8, 2, -2]], (255, 0, 0))
+triangle2 = Triangle3d([[6, 0, 0], [7, -2, -1], [8, -2, 4]], (255, 255, 0))
+triangle3 = Triangle3d([[7, 1, 1], [7, 3, 1], [8, 2, 6]], (255, 0, 0))
 
-re = Renderer((2000, 2000), (0, 0, 0), (1, 0, 0), 5, 90)
-re.renderImage([triangle1, triangle2, triangle3]).show()
+re = Renderer((1920, 1080), (0, 0, 0), (1, 0, 0), 5, 90)
+image = re.renderImage([triangle2, triangle1, triangle3])
+image.show()
