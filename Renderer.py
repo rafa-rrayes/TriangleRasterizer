@@ -12,11 +12,12 @@ class Triangle3d:
         vertices2d = []
         for point in self.vertices:
             point2d = np.array(project(camera_position, camera_direction, clip_distance, point))
-            point2d = [round((((point2d[0]/raster_size[0])+1)/2)*resolution[0]), round((((point2d[1]/raster_size[1])+1)/2)*resolution[1])]
-            print(point2d)
             if point2d is None:
                 return None
-            print(point2d)
+            try:
+                point2d = [round((((point2d[0]/raster_size[0])+1)/2)*resolution[0]), round((((point2d[1]/raster_size[1])+1)/2)*resolution[1])]
+            except:
+                return None
             vertices2d.append(point2d)
         return Triangle(vertices2d, self.color)
 class Renderer:
@@ -36,7 +37,7 @@ class Renderer:
                 self.raster.draw(triangle2d)
         return self.raster.image
 
-# Example of using Renderer
+# # Example of using Renderer
 triangle1 = Triangle3d([[7, 1, 1], [7, 3, 1], [8, 2, -2]], (255, 0, 0))
 triangle2 = Triangle3d([[6, 0, 0], [7, -2, -1], [8, -2, 4]], (255, 255, 0))
 triangle3 = Triangle3d([[7, 1, 1], [7, 3, 1], [8, 2, 6]], (255, 0, 0))
