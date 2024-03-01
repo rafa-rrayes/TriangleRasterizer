@@ -25,17 +25,19 @@ def project(camera_position, camera_direction, distance_to_plane, point):
     direction_vector = np.array([dx, dy, dz])
     normal_vector = np.array([A, B, C])
     
+
     # Solve for t
     t2 = (A * x0 + B * y0 + C * z0 + D) / np.dot(normal_vector, normal_vector)
     
     t = (A * x0 + B * y0 + C * z0 + D) / np.dot(direction_vector, normal_vector)
-
+    
     if t < 0 or t > 1:
         return None
+    
     # Calculate the intersection point
     intersection_point = np.array([x0, y0, z0]) + t * direction_vector
     vector = intersection_point - np.array([A, B, C])*t2
-    return (-vector[1], -vector[2])
+    return (-vector[0], -vector[2]), t
 
 # # Example usage
 # distance_to_plane = 5
