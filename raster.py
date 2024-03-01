@@ -1,15 +1,5 @@
 import numpy as np
-from numpy import array as vec
 from PIL import Image as IMG
-import time
-class Triangle:
-    def __init__(self, vertices, color, z):
-        v1 = vertices[0]
-        v2 = vertices[1]
-        v3 = vertices[2]
-        self.z = z
-        self.vertices = vec([[v1[0]+1, v1[1]+1], [v2[0]+1, v2[1]+1], [v3[0]+1, v3[1]+1]])
-        self.color = color
         
 class Raster:
     def __init__(self,resolution):        
@@ -79,7 +69,7 @@ class Raster:
         # find triangle bounds
         
         for i in range(len(imagem)):
-            linha = vec(imagem[i])
+            linha = np.array(imagem[i])
             
             linha = np.where((linha == [0, 0, 0, 0]).all(axis=1), 0, 1)
             dif = np.diff(linha)

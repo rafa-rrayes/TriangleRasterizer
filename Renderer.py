@@ -6,22 +6,7 @@ from findIntersection import *
 from extractor import *
 import random
 # Assuming Raster and Triangle classes are defined as given in Code 2
-class Triangle3d:
-    def __init__(self, vertices, color):
-        self.vertices = vertices
-        self.color = color
-    def project2d(self, camera_position, camera_direction, clip_distance, raster_size, resolution):
-        vertices2d = []
-        for point in self.vertices:
-            try:
-                point2d, z = project(camera_position, camera_direction, clip_distance, point)
-                point2d = np.array(point2d)
-            except:
-                return None
-            
-            point2d = [round((((point2d[0]/raster_size[0])+1)/2)*resolution[0]), round((((point2d[1]/raster_size[1])+1)/2)*resolution[1])]
-            vertices2d.append(point2d)
-        return Triangle(vertices2d, self.color, z)
+
 class Renderer:
     def __init__(self, resolution, position, direction, clip_distance, FOV):
         self.height, self.width = resolution
@@ -48,9 +33,7 @@ class Renderer:
         return self.raster.image
 
 # # Example of using Renderer
-triangles = []
-for i in extractTriangles("Donut.stl"):
-    triangles.append(Triangle3d(i, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 255)))
+triangles = extractTriangles("Donut.stl")
 re = Renderer((1920, 1080), (0, -1, 0), (0, 1, 0), 3, 120)
 image = re.renderImage(triangles)
 image.show()

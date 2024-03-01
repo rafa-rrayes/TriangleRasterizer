@@ -1,4 +1,5 @@
-import re
+import random
+from triangle import Triangle3d
 def extractTriangles(filepath):
     with open(filepath, "r") as file:
         text = file.read()
@@ -26,5 +27,6 @@ def extractTriangles(filepath):
             ponto3d.append(float(ponto[2]))
             triangulo3d.append(ponto3d)
             ponto3d = []
-        listTriangles.append(triangulo3d)
+        listTriangles.append(Triangle3d(triangulo3d, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 255)))
+
     return listTriangles
