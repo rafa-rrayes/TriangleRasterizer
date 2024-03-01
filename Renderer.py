@@ -42,7 +42,6 @@ class Renderer:
 
                 triangles2d.append(triangle2d)
         triangles2d.sort(key=lambda triangle: triangle.z, reverse=True)
-        print(triangles2d[0].z, triangles2d[-1].z)
         for triangle2d in triangles2d:
                 self.raster.draw(triangle2d, z_buffer=True)
 
@@ -53,8 +52,5 @@ triangles = []
 for i in extractTriangles("Donut.stl"):
     triangles.append(Triangle3d(i, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255), 255)))
 re = Renderer((1920, 1080), (0, -1, 0), (0, 1, 0), 3, 120)
-import time
-tempo = time.time()
 image = re.renderImage(triangles)
-print(time.time()-tempo)
 image.show()
