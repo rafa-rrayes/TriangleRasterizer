@@ -18,7 +18,7 @@ class Raster:
         triangle.vertices = triangle.vertices - [boundX[0], boundY[0]]
         # Ensure color is set for the triangle if not provided in your triangle object
         if z_buffer:
-            zto255 = max(min((((triangle.z-0.09)/0.035)*255 + 30), 255), 0)
+            zto255 = max(min((((triangle.z-0.038)/0.6)*255 + 50), 255), 0)
             triangle_color = np.array([zto255, zto255, zto255, 255])
         else:
             triangle_color = np.array(triangle.color)
@@ -42,9 +42,9 @@ class Raster:
         self.image = IMG.fromarray((self.image * 255).astype(np.uint8))
     def save(self, name):
         self.image.save(name)
-@njit(cache=True)
+@njit(cache=True, fastmath=True, parallel=True)
 def scanLine(imagem, triangle_color):
-    for i in range(len(imagem)):
+    for i in prange(len(imagem)):
         linha = imagem[i]
         linha = np.where(np_all_axis1((linha == np.array([0, 0, 0, 0]))), 0, 1)
         dif = np.diff(linha)
@@ -73,6 +73,7 @@ def np_all_axis1(x):
     for i in range(x.shape[1]):
         out = np.logical_and(out, x[:, i])
     return out
+
 def scanLineNormal(imagem, triangle_color):
     for i in range(len(imagem)):
         linha = imagem[i]
@@ -98,7 +99,7 @@ def scanLineNormal(imagem, triangle_color):
     return imagem
 @njit(cache=True)
 def drawLines(imagem, vertices, triangle_color):
-    for i in prange(3):
+    for i in range(3):
         if i == 2:
             first, last = vertices[2], vertices[0]
         else:
